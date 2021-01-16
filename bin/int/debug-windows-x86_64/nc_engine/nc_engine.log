@@ -1,7 +1,0 @@
-﻿  nc_console_engine.cpp
-D:\dev\native_console\nc_engine\src_cpp\nc_console_engine.cpp(117,54): warning C4244: '=': conversion from '_Rep' to 'double', possible loss of data
-          with
-          [
-              _Rep=__int64
-          ]
-  nc_engine.vcxproj -> D:\dev\native_console\bin\debug-windows-x86_64\nc_engine\nc_engine.lib

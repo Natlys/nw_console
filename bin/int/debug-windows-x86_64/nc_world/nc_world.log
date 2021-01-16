@@ -1,5 +1,0 @@
-﻿cl : command line warning D9002: ignoring unknown option '/mdd'
-  ncw_pch.cpp
-cl : command line warning D9002: ignoring unknown option '/mdd'
-  main.cpp
-  nc_world.vcxproj -> D:\dev\native_console\bin\debug-windows-x86_64\nc_world\nc_world.exe

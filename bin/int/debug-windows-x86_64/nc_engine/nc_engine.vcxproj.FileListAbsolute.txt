@@ -1,2 +1,0 @@
-D:\dev\native_console\bin\debug-windows-x86_64\nc_engine\nc_engine.pdb
-D:\dev\native_console\bin\int\debug-windows-x86_64\nc_engine\nc_engine.pdb
