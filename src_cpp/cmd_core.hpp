@@ -120,6 +120,4 @@ namespace CMD
 	};
 }
 
-#define XY_TO_X(x, y, w) (y * w + x)
-
 #endif	// CMD_CORE_HPP

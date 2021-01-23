@@ -53,7 +53,7 @@ namespace CMD
 		xCrd(0), yCrd(0),
 		wSize(10), hSize(4)
 	{
-		strcpy(&m_strName[0], &strName[0]);
+		strcpy_s(m_strName, &strName[0]);
 	}
 	CMenu::~CMenu() { }
 

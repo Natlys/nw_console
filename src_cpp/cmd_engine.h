@@ -8,9 +8,9 @@
 namespace CMD
 {
 	/// CmdEngine class
-	class CMD_API CmdEngine
+	class CMD_API CmdEngine : public ASingleton<CmdEngine>
 	{
-		using Widgets = HashMap<UInt32, CWidget*>;
+		friend class ASingleton<CmdEngine>;
 	public:
 		CmdEngine();
 		CmdEngine(const CmdEngine& rCpy) = delete;
@@ -19,8 +19,9 @@ namespace CMD
 		~CmdEngine();
 
 		// --getters
-		static inline CmdEngine& Get()					{ static CmdEngine s_CEngine; return s_CEngine; }
-		inline std::thread* GetRunThread()				{ return &m_thrRun; }
+		inline AMemAllocator& GetMemory()				{ return m_Memory; }
+		inline Thread& GetRunThread()					{ return m_thrRun; }
+
 		inline const Int16 GetWndWidth()		const	{ return m_cwInfo.GetWidth(); }
 		inline const Int16 GetWndHeight()		const	{ return m_cwInfo.GetHeight(); }
 		inline const CWindowInfo& GetWndInfo()	const	{ return m_cwInfo; }
@@ -60,7 +61,7 @@ namespace CMD
 		inline bool IsRunning() const { return m_bIsRunning; }
 
 		// --core_methods
-		bool Init();
+		bool Init(Size szMemory);
 		void Run();
 		void Quit();
 		// --drawing_methods
@@ -79,11 +80,12 @@ namespace CMD
 		inline void Update();
 		inline void OnEvent();
 	private:
-		bool m_bIsRunning;
-		std::thread m_thrRun;
+		Bit m_bIsRunning;
+		Thread m_thrRun;
+		MemArena m_Memory;
 
-		void *m_pCout, *m_pCin;
-		void *m_pCoutOrig, *m_pCinOrig;
+		Ptr m_pCout, m_pCin;
+		Ptr m_pCoutOrig, m_pCinOrig;
 		
 		CWindowInfo m_cwInfo;
 		CPixelInfo m_cpxInfo;
@@ -96,7 +98,7 @@ namespace CMD
 
 		std::chrono::steady_clock::time_point m_tpCurrTime;
 		std::chrono::steady_clock::time_point m_tpLastTime;
-		double m_nDeltaTime;
+		Float64 m_nDeltaTime;
 
 		UInt32 m_unSoundFreq;
 		UInt32 m_unSoundDur;

@@ -1,11 +1,12 @@
 #include "cmd_pch.hpp"
 #include "cmd_engine.h"
 
-#define CMD_INPUT_FLAGS ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT
+#define CMD_INPUT_FLAGS ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT /* | ENABLE_WINDOW_INPUT*/
 
 namespace CMD
 {
     CmdEngine::CmdEngine() :
+        m_Memory(MemArena(nullptr, 0)), m_thrRun(Thread()), m_bIsRunning(false),
         m_cwInfo(CWindowInfo()),
         m_cpxInfo(CPixelInfo()),
         m_cfbInfo(CFrameBufInfo()),
@@ -89,7 +90,7 @@ namespace CMD
     }
 
     // --<core_methods>--
-    bool CmdEngine::Init()
+    bool CmdEngine::Init(Size szMemory)
     {
         if (m_pCoutOrig == INVALID_HANDLE_VALUE || m_pCinOrig == INVALID_HANDLE_VALUE) { return false; }
 
@@ -118,7 +119,7 @@ namespace CMD
         m_nDeltaTime = durElapsed.count();
         
         Char strTitle[256];
-        sprintf(&strTitle[0], "%s::updates/sec = %3.2f", &m_cwInfo.strTitle[0], 1.0f / m_nDeltaTime);
+        sprintf_s(strTitle, "%s::updates/sec = %3.2f", &m_cwInfo.strTitle[0], 1.0f / m_nDeltaTime);
         SetConsoleTitleA(&strTitle[0]);
 
         OnEvent();
