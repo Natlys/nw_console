@@ -4,43 +4,6 @@
 // --<type_alias>--
 namespace CMD
 {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-	// --number
-	using Int8 = __int8;
-	using Int16 = __int16;
-	using Int32 = __int32;
-	using Int64 = __int64;
-	using UInt8 = unsigned __int8;
-	using UInt16 = unsigned short;
-	using UInt32 = unsigned int;
-	using UInt64 = unsigned long int;
-	using Float32 = float;
-	using Float64 = double;
-	using Float128 = long double;
-	// --string
-	using Char8 = char;
-	using Char16 = wchar_t;
-	using Char = char;
-	using WChar = wchar_t;
-	using UChar = unsigned char;
-
-	using CString = const char*;
-	using String = std::basic_string<char, std::char_traits<char>, std::allocator<char>>;
-	using WString = std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t>>;
-	// --memory
-	using Byte = char;
-	using UByte = unsigned char;
-	using Size = size_t;
-	// --containers
-	template <typename ValType, Size SzSpace> using SArray = std::array<ValType, SzSpace>;
-	template <typename ValType> using DArray = std::vector<ValType>;
-	template <typename KeyType, typename ValType> using HashMap = std::unordered_map<KeyType, ValType>;
-	template <typename KeyType, typename ValType> using DStack = std::stack<KeyType, ValType>;
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #if (defined CMD_PLATFORM_WINDOWS)
 	using CHistoryInfo = CONSOLE_HISTORY_INFO;
 	using CSelectionInfo = CONSOLE_SELECTION_INFO;
@@ -58,23 +21,14 @@ namespace CMD
 #define CMD_KEY_NONE					0
 // printable_keys
 #define CMD_KEY_SPACE_32				32
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_KEY_APOSTROPHE_39			39
 #define CMD_KEY_COMMA_44				44
 #define CMD_KEY_MINUS_45				45
 #define CMD_KEY_PERIOD_46				46
-<<<<<<< HEAD
-=======
-=======
 #define CMD_KEY_APOSTROPHE_39		39
 #define CMD_KEY_COMMA_44				44
 #define CMD_KEY_MINUS_45				45
 #define CMD_KEY_PERIOD_46			46
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_KEY_SLASH_47				47
 #define CMD_KEY_0_48					48
 #define CMD_KEY_1_49					49
@@ -116,15 +70,8 @@ namespace CMD
 #define CMD_KEY_Y_89					89
 #define CMD_KEY_Z_90					90
 // additional
-<<<<<<< HEAD
 #define CMD_KEY_LEFT_BRACKET_91			91
-=======
-<<<<<<< HEAD
 #define CMD_KEY_LEFT_BRACKET_91			91
-=======
-#define CMD_KEY_LEFT_BRACKET_91		91
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_KEY_BACKSLASH_92			92
 #define CMD_KEY_RIGHT_BRACKET_93		93
 // alphabet_lower_case
@@ -158,27 +105,15 @@ namespace CMD
 #define CMD_KEY_ESCAPE_27			27
 #define CMD_KEY_BACKSPACE_8			8
 #define CMD_KEY_HTAB_9				9
-<<<<<<< HEAD
+#define CMD_KEY_ENTER_13			13
+#define CMD_KEY_HTAB_11				11
+#define CMD_KEY_INS_45				45            
+#define CMD_KEY_DEL_46				46
 #define CMD_KEY_ENTER_13			13
 #define CMD_KEY_HTAB_11				11
 #define CMD_KEY_INS_45				45            
 #define CMD_KEY_DEL_46				46
 #define CMD_KEY_RIGHT_38			39
-=======
-<<<<<<< HEAD
-#define CMD_KEY_ENTER_13			13
-#define CMD_KEY_HTAB_11				11
-#define CMD_KEY_INS_45				45            
-#define CMD_KEY_DEL_46				46
-#define CMD_KEY_RIGHT_38			39
-=======
-#define CMD_KEY_ENTER_13				13
-#define CMD_KEY_HTAB_11				11
-#define CMD_KEY_INS_45				45            
-#define CMD_KEY_DEL_46				46
-#define CMD_KEY_RIGHT_38				39
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_KEY_LEFT_37				37
 #define CMD_KEY_DOWN_40				40
 #define CMD_KEY_UP_38				38
@@ -194,10 +129,6 @@ namespace CMD
 #define CMD_KEY_F10					' '
 #define CMD_KEY_F11					' '
 #define CMD_KEY_F12					' '
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_KEY_KP_0				' '
 #define CMD_KEY_KP_1				' '
 #define CMD_KEY_KP_2				' '
@@ -208,31 +139,12 @@ namespace CMD
 #define CMD_KEY_KP_7				' '
 #define CMD_KEY_KP_8				' '
 #define CMD_KEY_KP_9				' '
-<<<<<<< HEAD
-=======
-=======
-#define CMD_KEY_KP_0					' '
-#define CMD_KEY_KP_1					' '
-#define CMD_KEY_KP_2					' '
-#define CMD_KEY_KP_3					' '
-#define CMD_KEY_KP_4					' '
-#define CMD_KEY_KP_5					' '
-#define CMD_KEY_KP_6					' '
-#define CMD_KEY_KP_7					' '
-#define CMD_KEY_KP_8					' '
-#define CMD_KEY_KP_9					' '
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_KEY_KP_DECIMAL			' '
 #define CMD_KEY_KP_DIVIDE			' '
 #define CMD_KEY_KP_MULTIPLY			' '
 #define CMD_KEY_KP_SUBTRACT			' '
 #define CMD_KEY_KP_ADD				' '
 #define CMD_KEY_KP_ENTER_13			' '
-<<<<<<< HEAD
-#define CMD_KEY_KP_EQUAL			' '
-=======
-<<<<<<< HEAD
 #define CMD_KEY_KP_EQUAL			' '
 #define CMD_KEY_SHIFT_LEFT			16
 #define CMD_KEY_SHIFT_RIGHT			16
@@ -242,22 +154,6 @@ namespace CMD
 #define CMD_KEY_ALT_RIGHT			18
 
 #define CMD_KEY_LAST				256
-=======
-#define CMD_KEY_KP_EQUAL				' '
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
-#define CMD_KEY_SHIFT_LEFT			16
-#define CMD_KEY_SHIFT_RIGHT			16
-#define CMD_KEY_CONTROL_LEFT			17
-#define CMD_KEY_CONTROL_RIGHT		17
-#define CMD_KEY_ALT_LEFT				18
-#define CMD_KEY_ALT_RIGHT			18
-
-<<<<<<< HEAD
-#define CMD_KEY_LAST				256
-=======
-#define CMD_KEY_LAST					256
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 // ========</key_codes_cmd>========
 
 // ========<device_codes_cmd>========
@@ -269,23 +165,11 @@ namespace CMD
 #define CMD_MS_BTN_5				5
 #define CMD_MS_BTN_6				6
 #define CMD_MS_BTN_7				7
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_MS_BTN_LAST				CMD_MS_BTN_7
 #define CMD_MS_BTN_LEFT				CMD_MS_BTN_0
 #define CMD_MS_BTN_RIGHT			CMD_MS_BTN_1
 #define CMD_MS_BTN_MIDDLE			CMD_MS_BTN_2
-<<<<<<< HEAD
-=======
-=======
-#define CMD_MS_BTN_LAST			CMD_MS_BTN_7
-#define CMD_MS_BTN_LEFT			CMD_MS_BTN_0
-#define CMD_MS_BTN_RIGHT			CMD_MS_BTN_1
-#define CMD_MS_BTN_MIDDLE		CMD_MS_BTN_2
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
+#define CMD_MS_BTN_LAST				CMD_MS_BTN_7
 #define CMD_MS_BTN_COUNT			5
 // ========</device_codes_cmd>========
 
@@ -301,32 +185,14 @@ namespace CMD
 
 #define CMD_MS_PRESS_DOUBLE		0x0002
 
-<<<<<<< HEAD
 #define CMD_MS_MOVED			0x0001
-=======
-<<<<<<< HEAD
-#define CMD_MS_MOVED			0x0001
-=======
-#define CMD_MS_MOVED				0x0001
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_MS_WHEELED			0x0004
 #define CMD_MS_HWHEELED			0x0008
 
 #define CMD_KEY_EVT				0x0001
 #define CMD_MS_EVT				0x0002
-<<<<<<< HEAD
 #define CMD_WND_SIZE_EVT		0x0004
 #define CMD_MENU_EVT			0x0008
-=======
-<<<<<<< HEAD
-#define CMD_WND_SIZE_EVT		0x0004
-#define CMD_MENU_EVT			0x0008
-=======
-#define CMD_WND_SIZE_EVT			0x0004
-#define CMD_MENU_EVT				0x0008
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 #define CMD_FOCUS_EVT			0x0010
 // ========</event_types_cmd>========
 

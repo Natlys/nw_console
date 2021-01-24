@@ -121,13 +121,4 @@ namespace CMD
 	};
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:src_cpp/cmd_core.hpp
-=======
-#define XY_TO_X(x, y, w) (y * w + x)
-
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1:nc_engine/src_cpp/nc_core.hpp
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
-
-#endi // CMD_CORE_HPP
+#endif	// CMD_CORE_HPP

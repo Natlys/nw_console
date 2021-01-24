@@ -6,42 +6,20 @@
 
 namespace CMD
 {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-	using CWidgetCallback = std::function<void()>;
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 	class CMD_API CWidget
 	{
 	public:
 		using SubWidgets = std::unordered_map<UInt32, CWidget*>;
 	public:
-<<<<<<< HEAD
 		CWidget(const char* strName);
 		~CWidget();
-=======
-<<<<<<< HEAD
-		CWidget(const char* strName);
-		~CWidget();
-=======
-		CWidget();
-		CWidget(const char* strName);
 		virtual ~CWidget();
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
-
 		// --getters
 		inline const char* GetName() { return &m_strName[0]; }
 		inline UInt32 GetId() { return m_unId; }
 		inline V2xy GetCoord() { return m_xyCrd; }
 		inline V2xy GetSize() { return m_whSize; }
 		inline SubWidgets& GetSubWidgets() { return m_SubWidgets; }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 		inline CWidget* GetSubWidget(UInt32 unId) { return m_SubWidgets.find(unId) == m_SubWidgets.end() ? nullptr : m_SubWidgets[unId]; }
 		inline bool IsEnabled() { return m_bIsEnabled; }
 		inline bool IsHovered() { return m_bIsHovered; }
@@ -135,9 +113,6 @@ namespace CMD
 		m_Items[strName].m_pOverMenu = this;
 		return m_Items[strName];
 	}
-<<<<<<< HEAD
-=======
-=======
 		inline CWidget* GetSubWidget(UInt32 unId) { return m_SubWidgets.find(unId) == m_SubWidgets.end()? nullptr : m_SubWidgets[unId]; }
 		inline bool IsEnabled() { return m_bIsEnabled; }
 		// --setters
@@ -186,8 +161,6 @@ namespace CMD
 		virtual void OnKeyEvent(MOUSE_EVENT_RECORD& rkEvt) override;
 	private:
 	};
->>>>>>> fabc2e7528a22bff88ee5d7574524ce2147413b1
->>>>>>> 8ee9b5075799cb08c8548082c87b58a6ffc3c303
 }
 
 #endif	// CMD_GUI_H
