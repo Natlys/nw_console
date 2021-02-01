@@ -3,113 +3,117 @@
 
 #include <cmd_engine.h>
 
+#include <nwlib/nwl_physics_2d.h>
+
 IdStack CMD::CWidget::s_IdStack = IdStack();
 
 namespace CMD
 {
-	CWidget::CWidget(const char* strName) : m_unId(0), m_strName(strName) {
+	CWidget::CWidget() :
+		m_unId(0), m_strName("cwidget"),
+		xyCoord{ 0, 0 }, whSize{ 10, 5 }, xywhPadding{ 1, 1, 1, 1 },
+		xywhDrawRect{ 0, 0, 10, 10 },
+		colorDefault(CCN_BG_4 | CCN_FG_8), colorDisable(CCN_BG_1 | CCN_FG_4),
+		colorFocus(CCN_BG_8 | CCN_FG_12), colorAction(CCN_BG_8 | CCN_FG_12),
+		colorCurrent(CCN_BG_4 | CCN_FG_8),
+		m_wStates{ 0 },
+		m_fnAction{ []()->UInt32 { return CWS_DEFAULT; } }
+	{
 		m_unId = s_IdStack.GetFreeId();
 		m_strName = m_strName + "_" + std::to_string(m_unId);
 	}
-	CWidget::~CWidget(){
+	CWidget::~CWidget()
+	{
 		s_IdStack.SetFreeId(m_unId);
 	}
-
 	// --setters
-	// --==<core_methods>==--
-	void CWidget::OnDraw()
-	{
-		CmdEngine::Get().GetFrameBuf()->DrawStrXY(m_xyCrd.X, m_xyCrd.Y, m_Color, &m_strName[0]);
-	}
-	void CWidget::OnRedraw()
-	{
-		CmdEngine::Get().GetFrameBuf()->DrawStrXY(m_xyCrd.X, m_xyCrd.Y, CCN_BG_1 | CCN_FG_1, &m_strName[0]);
-	}
-	void CWidget::OnHovered(UInt16 xCrd, UInt16 yCrd)
-	{
-		if (xCrd >= m_xyCrd.X && yCrd >= m_xyCrd.Y &&
-			xCrd <= m_xyCrd.X + m_whSize.X && yCrd <= m_xyCrd.Y + m_whSize.Y) {
-			m_bIsHovered = true;
-		}
-		else { m_bIsHovered = false; }
-		m_Color = m_bIsHovered ? CCN_BG_8 | CCN_FG_12 : CCN_BG_4 | CCN_FG_8;
-		OnDraw();
-	}
-	void CWidget::OnActivate(bool bIsActive)
-	{
-		m_bIsActive = bIsActive;
-		m_Color = bIsActive ? CCN_BG_12 | CCN_FG_16 : CCN_BG_2 | CCN_FG_4;
-		for (auto& itWidget : m_SubWidgets) { SetEnabled(bIsActive); }
-		OnDraw();
-	}
-	// --==</core_methods>==--
+	void CWidget::SetName(const char* strName) { m_strName = strName; }
+	void CWidget::SetAction(const Action& rAct) { m_fnAction = rAct; }
 }
 
 namespace CMD
 {
-	CMenu::CMenu() : CMenu("cmenu") { }
-	CMenu::CMenu(const char* strName) : m_strName("cmenu"),
-		m_CurrItem(m_Items.end()),
-		xCrd(0), yCrd(0),
-		wSize(10), hSize(4)
-	{
-		strcpy_s(m_strName, &strName[0]);
-	}
-	CMenu::~CMenu() { }
+	CMenuItem::CMenuItem() : CWidget() { }
+	CMenuItem::~CMenuItem() { }
 
 	// --setters
-	void CMenu::SetCurrItem(CMenu* pMenu) {
-		m_CurrItem->second.Color = CCN_BG_4 | CCN_FG_8;
-		m_CurrItem = m_Items.begin();
-		if (pMenu == nullptr) { return; }
-		m_CurrItem = m_Items.find(pMenu->GetName());
-		m_CurrItem->second.Color = CCN_BG_8 | CCN_FG_12;
-	}
-	void CMenu::SetCurrItem(const char* strName) {
-		m_CurrItem = m_Items.find(strName);
-		if (m_CurrItem == m_Items.end()) { m_CurrItem = m_Items.begin(); }
-		m_CurrItem->second.Color = CCN_BG_8 | CCN_FG_12;
-	}
 	// --core_methods
-	void CMenu::OnDraw()
+	void CMenuItem::OnDraw()
 	{
-		Int16 xCrdRel0 = xCrd + PadLt, yCrdRel0 = yCrd + PadTp;
-		Int16 xCrdRel1 = xCrd + wSize - PadRt, yCrdRel1 = xCrd + hSize - PadBt;
-		if (m_pOverMenu != nullptr) {
-			xCrdRel0 += m_pOverMenu->xCrd;
-			yCrdRel0 += m_pOverMenu->yCrd;
-			xCrdRel1 += m_pOverMenu->xCrd;
-			yCrdRel1 += m_pOverMenu->yCrd;
-		}
-		//CmdEngine::Get().DrawRectXY(xCrdRel0, yCrdRel0, xCrdRel1, yCrdRel1, Color);
-		CmdEngine::Get().GetFrameBuf()->DrawStrXY(xCrdRel0, yCrdRel0, Color, &m_strName[0]);
-		if (m_Items.empty()) { return; }
-		for (MenuItems::iterator itItem = m_Items.begin(); itItem != m_Items.end(); itItem++) { itItem->second.OnDraw(); }
+		xywhDrawRect.x = xyCoord.x + xywhPadding.x;
+		xywhDrawRect.y = xyCoord.y + xywhPadding.y;
+		xywhDrawRect.z = xyCoord.x - xywhPadding.z + whSize.x;
+		xywhDrawRect.w = xyCoord.y - xywhPadding.w + whSize.y;
+		CEngine::Get().DrawRectXY(static_cast<UInt16>(xywhDrawRect.x), static_cast<UInt16>(xywhDrawRect.y),
+			static_cast<UInt16>(xywhDrawRect.z), static_cast<UInt16>(xywhDrawRect.w), colorCurrent);
+		CEngine::Get().DrawBytesXY(static_cast<UInt16>(xywhDrawRect.x), static_cast<UInt16>(xywhDrawRect.y),
+			colorCurrent, &m_strName[0], strlen(&m_strName[0]));
 	}
-	void CMenu::OnAction(CMenuActions cmAction)
+	void CMenuItem::OnEvent(MouseEvent& rmEvt)
 	{
-		if (m_CurrItem == m_Items.end()) { SetCurrItem(m_Items.begin()->second.GetName()); }
-		switch (cmAction) {
-		case CMA_ACT:
+		switch (rmEvt.evType) {
+		case ET_MOUSE_PRESS:
+			if (GetState() == CWS_FOCUS) { OnState(CWS_ACT); }
 			break;
-		case CMA_DEACT:
+		case ET_MOUSE_RELEASE:
+			if (GetState() == CWS_FOCUS) { OnState(CWS_DEACT); }
 			break;
-		case CMA_MOVE_LT:
-			m_CurrItem--;
+		case ET_MOUSE_MOVE:
+			if (IsCollidPointRect({ rmEvt.nX, rmEvt.nY }, xyCoord, xyCoord + whSize)) { OnState(CWS_FOCUS); }
+			else { OnState(CWS_DEFOCUS); }
 			break;
-		case CMA_MOVE_RT:
-			m_CurrItem++;
-			break;
-		case CMA_MOVE_DN:
-			m_CurrItem--;
-			break;
-		case CMA_MOVE_UP:
-			m_CurrItem++;
-			break;
-		default:	break;
+		default: break;
 		}
-		if (m_CurrItem == m_Items.end()) { SetCurrItem(m_Items.begin()->second.GetName()); }
-		m_CurrItem->second.Color = CCN_BG_8 | CCN_FG_12;
-		OnDraw();
+	}
+	void CMenuItem::OnEvent(KeyboardEvent& rkEvt)
+	{
+		switch (rkEvt.evType) {
+		case ET_KEY_PRESS:
+			switch (rkEvt.unKeyCode) {
+			case CMD::KC_ENTER:
+				OnState(CWS_ACT);
+				break;
+			case CMD::KC_BACKSPACE:
+				break;
+			default: break;
+			}
+		case ET_KEY_RELEASE:
+			switch (rkEvt.unKeyCode) {
+			case CMD::KC_ENTER:
+				OnState(CWS_DEACT);
+				break;
+			default: break;
+			}
+		default: break;
+		}
+	}
+	UInt32 CMenuItem::OnState(CWidgetStates wState)
+	{
+		if (GetState() == CWS_DISABLE && wState != CWS_ENABLE) { return 0; }
+		switch (wState) {
+		case CWS_ENABLE:
+			colorCurrent = colorDefault;
+			break;
+		case CWS_DISABLE:
+			colorCurrent = colorDisable;
+			break;
+		case CWS_ACT:
+			colorCurrent = colorAction;
+			m_fnAction();
+			break;
+		case CWS_DEACT:
+			colorCurrent = colorDefault;
+			break;
+		case CWS_FOCUS:
+			colorCurrent = colorFocus;
+			break;
+		case CWS_DEFOCUS:
+			colorCurrent = colorDefault;
+			break;
+		default: break;
+		}
+		for (UInt32 si = 1; si > 10; si--) { m_wStates[si] = m_wStates[si - 1]; }
+		m_wStates[0] = wState;
+		return wState;
 	}
 }

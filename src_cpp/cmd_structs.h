@@ -13,14 +13,8 @@ namespace CMD
 		V2wh whMaxSize = { 1, 1 };
 		bool bIsFocused = false;
 	public:
-		inline Int16 GetWidth() const {
-			return static_cast<Int16>(std::abs(
-				static_cast<Int16>(xywhRect.Right) - static_cast<Int16>(xywhRect.Left)));
-		}
-		inline Int16 GetHeight() const {
-			return static_cast<Int16>(std::abs(
-				static_cast<Int16>(xywhRect.Bottom) - static_cast<Int16>(xywhRect.Top)));
-		}
+		inline Int16 GetWidth() const { return Abs(xywhRect.Right - xywhRect.Left); }
+		inline Int16 GetHeight() const { return Abs(xywhRect.Bottom - xywhRect.Top); }
 		inline V2xy GetSize() const { return { GetWidth(), GetHeight() }; }
 	};
 	struct CMD_API CEventsInfo
