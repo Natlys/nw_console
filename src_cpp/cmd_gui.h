@@ -19,34 +19,31 @@ namespace CMD
 	public:
 		using Action = std::function<UInt32()>;
 	public:
-		UInt16 colorDefault;
-		UInt16 colorDisable;
-		UInt16 colorFocus;
-		UInt16 colorAction;
-		UInt16 colorCurrent;
+		CPixel pxDefault;
+		CPixel pxDisable;
+		CPixel pxFocus;
+		CPixel pxAction;
+		CPixel pxDraw;
 		V2i xyCoord;
 		V2i whSize;
-		V4i xywhPadding;
-		V4i xywhDrawRect;
+		V4i rectPadding;
 	public:
 		CWidget();
 		virtual ~CWidget();
 		// --getters
 		inline const char* GetName() const { return &m_strName[0]; }
 		inline UInt32 GetId() const { return m_unId; }
-		inline CWidgetStates GetState(UInt32 unIdx = 0) const { if (unIdx >= 10) { return CWS_DEFAULT; } return m_wStates[unIdx]; }
+		inline CWidgetStates GetState() const { return m_wState; }
 		// --setters
 		void SetName(const char* strName);
 		void SetAction(const Action& rAct);
 		// --core_methods
 		virtual void OnDraw() = 0;
-		virtual void OnEvent(MouseEvent& rmEvt) = 0;
-		virtual void OnEvent(KeyboardEvent& rkEvt) = 0;
-		virtual UInt32 OnState(CWidgetStates wState) = 0;
+		virtual void OnState(CWidgetStates wState) = 0;
 	protected:
 		String m_strName;
 		UInt32 m_unId = 0;
-		CWidgetStates m_wStates[10];
+		CWidgetStates m_wState;
 		Action m_fnAction;
 	private:
 		static IdStack s_IdStack;
@@ -62,9 +59,7 @@ namespace CMD
 		virtual ~CMenuItem();
 		// --core_methods
 		virtual void OnDraw() override;
-		virtual void OnEvent(MouseEvent& rmEvt) override;
-		virtual void OnEvent(KeyboardEvent& rmEvt) override;
-		virtual UInt32 OnState(CWidgetStates wState) override;
+		virtual void OnState(CWidgetStates wState) override;
 	};
 }
 

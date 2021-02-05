@@ -26,12 +26,12 @@ namespace CMD
 		// --core_methods
 		void Remake();
 		inline void Clear() { for (Size pxi = 0; pxi < m_szPxCount; pxi++) { m_pPxData[pxi] = m_cpxClear; } }
-		inline void DrawPixelX(Size xCrd, CPixel pxDraw);
-		inline void DrawPixelXY(UInt16 xCrd, UInt16 yCrd, CPixel pxDraw);
-		inline void DrawPixelX(Size xCrd, UInt16 cColor, CPixelTypes pxType = CPT_SOLID);
-		inline void DrawPixelXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, CPixelTypes pxType = CPT_SOLID);
-		inline void DrawByteXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, Byte bt);
-		inline void DrawBytesXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, Byte* str, UInt32 unLen = 1);
+		inline void DrawPixelX(Size nX, CPixel pxDraw);
+		inline void DrawPixelXY(Int16 nX, Int16 nY, CPixel pxDraw);
+		inline void DrawPixelX(Size nX, UInt16 cColor, CPixelTypes pxType = CPT_SOLID);
+		inline void DrawPixelXY(Int16 nX, Int16 nY, UInt16 cColor, CPixelTypes pxType = CPT_SOLID);
+		inline void DrawByteXY(Int16 nX, Int16 nY, UInt16 cColor, Byte bt);
+		inline void DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, Int32 nLen = 1);
 	private:
 		Ptr m_pCout;
 		Size m_szPxCount;
@@ -40,44 +40,52 @@ namespace CMD
 		CFrameBufInfo m_Info;
 	};
 	// --==<drawing_methods>==--
-	inline void CFrameBuf::DrawPixelX(Size xCrd, CPixel pxDraw) {
-		if (xCrd + 1 >= m_szPxCount) { return; }
+	inline void CFrameBuf::DrawPixelX(Size nX, CPixel pxDraw) {
+		if (nX + 1 >= m_szPxCount) { return; }
 		UInt16 unWidth = GetWidth();
-		m_pPxData[xCrd++] = pxDraw;
-		if ((xCrd % unWidth) == 0) { return; }
-		m_pPxData[xCrd] = pxDraw;
+		m_pPxData[nX++] = pxDraw;
+		if ((nX % unWidth) == 0) { return; }
+		m_pPxData[nX] = pxDraw;
 	}
-	inline void CFrameBuf::DrawPixelXY(UInt16 xCrd, UInt16 yCrd, CPixel pxDraw) {
+	inline void CFrameBuf::DrawPixelXY(Int16 nX, Int16 nY, CPixel pxDraw) {
+		if (nX < 0 || nY < 0) { return; }
 		UInt16 unWidth = GetWidth();
-		if (xCrd > unWidth) { xCrd -= (unWidth + 1); }
-		DrawPixelX(NWL_XY_TO_X(xCrd, yCrd, unWidth), pxDraw);
+		if (nX > unWidth) { return; }
+		DrawPixelX(NWL_XY_TO_X(nX, nY, unWidth), pxDraw);
 	}
-	inline void CFrameBuf::DrawPixelX(Size xCrd, UInt16 cColor, CPixelTypes pxType) {
-		if (xCrd + 1 >= m_szPxCount) { return; }
+	inline void CFrameBuf::DrawPixelX(Size nX, UInt16 cColor, CPixelTypes pxType) {
+		if (nX + 1 >= m_szPxCount) { return; }
 		UInt16 unWidth = GetWidth();
 		CPixel cpx;
 		cpx.Attributes = cColor;
 		cpx.Char.UnicodeChar = pxType;
-		m_pPxData[xCrd++] = cpx;
-		if ((xCrd % unWidth) == 0) { return; }
-		m_pPxData[xCrd] = cpx;
+		m_pPxData[nX++] = cpx;
+		if ((nX % unWidth) == 0) { return; }
+		m_pPxData[nX] = cpx;
 	}
-	inline void CFrameBuf::DrawPixelXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, CPixelTypes pxType) {
+	inline void CFrameBuf::DrawPixelXY(Int16 nX, Int16 nY, UInt16 cColor, CPixelTypes pxType) {
+		if (nX < 0) { return; }
 		UInt16 unWidth = GetWidth();
-		if (xCrd > unWidth) { xCrd -= (unWidth + 1); }
-		DrawPixelX(NWL_XY_TO_X(xCrd, yCrd, unWidth), cColor);
+		if (nX > unWidth) { return; }
+		DrawPixelX(NWL_XY_TO_X(nX, nY, unWidth), cColor);
 	}
-	inline void CFrameBuf::DrawByteXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, Byte bt)
+	inline void CFrameBuf::DrawByteXY(Int16 nX, Int16 nY, UInt16 cColor, Byte bt)
 	{
+		if (nX < 0 || nY < 0) { return; }
 		UInt16 unWidth = GetWidth();
-		if (xCrd > unWidth) { xCrd -= unWidth; yCrd++; }
-		Size szCrd = NWL_XY_TO_X(xCrd, yCrd, unWidth);
+		if (nX > unWidth) { return; }
+		Size szCrd = NWL_XY_TO_X(nX, nY, unWidth);
 		if (szCrd >= m_szPxCount) { return; }
 		m_pPxData[szCrd].Attributes = cColor;
 		m_pPxData[szCrd].Char.UnicodeChar = static_cast<WChar>(bt);
 	}
-	inline void CFrameBuf::DrawBytesXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, Byte* str, UInt32 unLen) {
-		for (UInt32 ci = 0; ci < unLen; ci++) { DrawByteXY(xCrd + ci, yCrd, cColor, str[ci]); }
+	inline void CFrameBuf::DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, Int32 nLen) {
+		if (nX0 > nX1) { nX0 = nX0 - nX1; nX1 = nX0 + nX1; nX1 = nX0 - nX1; }
+		if (nY0 > nY1) { nY0 = nY0 - nY1; nY1 = nY0 + nY1; nY1 = nY0 - nY1; }
+		for (Int32 ci = 0, ix = nX0; ci < nLen && nY0 != nY1; ci++, ix++) {
+			if (ix > nX1 || str[ci] == '\n') { ix = 0; nY0 += 1; }
+			else { DrawByteXY(ix, nY0, cColor, str[ci]); }
+		}
 	}
 	// --==</drawing_methods>==--
 }

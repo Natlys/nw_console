@@ -9,15 +9,15 @@
 
 namespace CMD
 {
-	/// CEngine class
-	class CMD_API CEngine : public AEngine<CEngine>
+	/// CmdEngine class
+	class CMD_API CmdEngine : public AEngine<CmdEngine>
 	{
 	public:
-		CEngine();
-		~CEngine();
+		CmdEngine();
+		~CmdEngine();
 
 		// --getters
-		inline CFrameBuf* GetFrameBuf()				{ return &m_fb; }
+		inline CFrameBuf* GetFrameBuf()				{ return &m_fmBuf; }
 		
 		inline const CWindowInfo& GetWndInfo()	const	{ return m_wInfo; }
 		inline const CPixelInfo& GetPxInfo()	const	{ return m_pxInfo; }
@@ -55,19 +55,19 @@ namespace CMD
 		virtual void Update() override;
 		virtual void OnEvent(AEvent& rEvt) override;
 		// --drawing_methods
-		inline void DrawLineX(UInt16 xCrd0, UInt16 xCrd1, UInt16 cColor);
-		inline void DrawLineY(UInt16 yCrd0, UInt16 yCrd1, UInt16 cColor);
-		inline void DrawLineXY(UInt16 xCrd0, UInt16 yCrd0, UInt16 xCrd1, UInt16 yCrd1, UInt16 cColor);
-		inline void DrawRectXY(UInt16 nLt, UInt16 nTp, UInt16 nRt, UInt16 nBt, UInt16 cColor);
-		inline void DrawBytesXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, Byte* str, UInt16 unLen);
-		inline void DrawRectXYWH(UInt16 nX, UInt16 nY, UInt16 nW, UInt16 nH, UInt16 cColor);
+		inline void DrawLineX(Int16 nX0, Int16 nX1, CPixel cpx);
+		inline void DrawLineY(Int16 nY0, Int16 nY1, CPixel cpx);
+		inline void DrawLineXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, CPixel cpx);
+		inline void DrawRectXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, CPixel cpx);
+		inline void DrawRectXYWH(Int16 nX, Int16 nY, Int16 nW, Int16 nH, CPixel cpx);
+		inline void DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, UInt16 unLen);
 	private:
 		inline void PollEvents();
 		inline void SwapBuffers();
 		inline void UpdateCursor();
 		inline void UpdateKeyboard();
 	private:
-		CFrameBuf m_fb;
+		CFrameBuf m_fmBuf;
 		Ptr m_pCout, m_pCin;
 
 		CWindowInfo m_wInfo;
@@ -75,31 +75,31 @@ namespace CMD
 		CCursorInfo m_curInfo;
 		CEventsInfo m_evInfo;
 	};
-	inline void CEngine::DrawLineX(UInt16 xCrd0, UInt16 xCrd1, UInt16 cColor) {
-		UInt16 unHeight = m_fb.GetHeight();
-		for (UInt16 ix = xCrd0; ix <= xCrd1; ix++) {
+	inline void CmdEngine::DrawLineX(Int16 nX0, Int16 nX1, CPixel cpx) {
+		UInt16 unHeight = m_fmBuf.GetHeight();
+		for (UInt16 ix = nX0; ix <= nX1; ix++) {
 			for (UInt16 iy = 0; iy <= unHeight; iy++) {
-				m_fb.DrawPixelXY(ix, iy, cColor);
+				m_fmBuf.DrawPixelXY(ix, iy, cpx);
 			}
 		}
 	}
-	inline void CEngine::DrawLineY(UInt16 yCrd0, UInt16 yCrd1, UInt16 cColor) {
-		UInt16 unWidth = m_fb.GetWidth();
-		for (UInt16 iy = yCrd0; iy <= yCrd1; iy++) {
+	inline void CmdEngine::DrawLineY(Int16 nY0, Int16 nY1, CPixel cpx) {
+		UInt16 unWidth = m_fmBuf.GetWidth();
+		for (UInt16 iy = nY0; iy <= nY1; iy++) {
 			for (UInt16 ix = 0; ix <= unWidth; ix += 2) {
-				m_fb.DrawPixelXY(ix, iy, cColor);
+				m_fmBuf.DrawPixelXY(ix, iy, cpx);
 			}
 		}
 	}
-	inline void CEngine::DrawLineXY(UInt16 xCrd0, UInt16 yCrd0, UInt16 xCrd1, UInt16 yCrd1, UInt16 cColor) {
-		Int16 nDeltaX = xCrd1 - xCrd0;
-		Int16 nDeltaY = yCrd1 - yCrd0;
+	inline void CmdEngine::DrawLineXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, CPixel cpx) {
+		Int16 nDeltaX = nX1 - nX0;
+		Int16 nDeltaY = nY1 - nY0;
 		Int16 nDirX = nDeltaX < 0 ? -1 : 1;
 		Int16 nDirY = nDeltaY < 0 ? -1 : 1;
 		Int16 nErr = 0;
 		Int16 nDeltaErr = nDeltaY;
-		for (Int16 nX = xCrd0, nY = yCrd0; nX != xCrd1; nX += nDirX) {
-			m_fb.DrawPixelXY(nX, nY, cColor);
+		for (Int16 nX = nX0, nY = nY0; nX != nY1; nX += nDirX) {
+			m_fmBuf.DrawPixelXY(nX, nY, cpx);
 			nErr += nDeltaErr;
 			if (nErr > nDeltaX) {
 				nY += nDirY;
@@ -107,27 +107,23 @@ namespace CMD
 			}
 		}
 	}
-	inline void CEngine::DrawRectXY(UInt16 nLt, UInt16 nTp, UInt16 nRt, UInt16 nBt, UInt16 cColor) {
-		UInt16 unWidth = m_fb.GetWidth();
-		UInt16 unHeight = m_fb.GetHeight();
-		if (nLt > nRt) { nLt = nLt - nRt; nRt = nRt + nLt; nLt = nRt - nLt; }
-		if (nTp > nBt) { nTp = nTp - nBt; nBt = nBt + nTp; nTp = nBt - nTp; }
-		if (nLt > unWidth) { nLt = unWidth; }
-		if (nRt > unWidth) { nRt = unWidth; }
-		if (nTp > unHeight) { nTp = unHeight; }
-		if (nBt > unHeight) { nBt = unHeight; }
-		if (nBt - nTp > unHeight) { return; }
-		for (UInt16 iy = nTp; iy <= nBt; iy++) {
-			for (UInt16 ix = nLt; ix <= nRt; ix += 2) {
-				m_fb.DrawPixelXY(ix, iy, cColor);
+	inline void CmdEngine::DrawRectXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, CPixel cpx) {
+		UInt16 unWidth = m_fmBuf.GetWidth();
+		UInt16 unHeight = m_fmBuf.GetHeight();
+		Int16 nDeltaX = nX0 > nX1 ? -1 : +1;
+		Int16 nDeltaY = nY0 > nY1 ? -1 : +1;
+		nY1 += nDeltaY;
+		for (Int16 iy = nY0; iy != nY1; iy += nDeltaY) {
+			for (Int16 ix = nX0; ix != nX1; ix += nDeltaX) {
+				m_fmBuf.DrawPixelXY(ix, iy, cpx);
 			}
 		}
 	}
-	inline void CEngine::DrawRectXYWH(UInt16 nX, UInt16 nY, UInt16 nW, UInt16 nH, UInt16 cColor) {
-		DrawRectXY(nX, nY, nX + nW, nY + nH, cColor);
+	inline void CmdEngine::DrawRectXYWH(Int16 nX, Int16 nY, Int16 nW, Int16 nH, CPixel cpx) {
+		DrawRectXY(nX, nY, nX + nW, nY + nH, cpx);
 	}
-	inline void CEngine::DrawBytesXY(UInt16 xCrd, UInt16 yCrd, UInt16 cColor, Byte* str, UInt16 unLen) {
-		m_fb.DrawBytesXY(xCrd, yCrd, cColor, str, unLen);
+	inline void CmdEngine::DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, UInt16 unLen) {
+		m_fmBuf.DrawBytesXY(nX0, nY0, nX1, nY1, cColor, str, unLen);
 	}
 }
 #endif	// CMD_ENGINE_H

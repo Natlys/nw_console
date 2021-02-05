@@ -19,42 +19,43 @@ namespace CMD
     // --==<core_methods>==--
     void CFrameBuf::Remake() {
 		if (m_pPxData != nullptr) {
-			DelTArr<CPixel>(CEngine::Get().GetMemory(), m_pPxData, m_szPxCount);
+			DelTArr<CPixel>(CmdEngine::Get().GetMemory(), m_pPxData, m_szPxCount);
 			m_pPxData = nullptr;
 			m_szPxCount = 0;
 		}
 
-		V2xy whSize = { CEngine::Get().GetWndWidth() + 1, CEngine::Get().GetWndHeight() + 1 };
+		V2xy whSize = { CmdEngine::Get().GetWndWidth() + 1, CmdEngine::Get().GetWndHeight() + 1 };
 
 		if (m_Info.dwSize.X < whSize.X) { m_Info.dwSize.X = whSize.X; }
 		if (m_Info.dwSize.Y < whSize.Y) { m_Info.dwSize.Y = whSize.Y; }
 		m_Info.srWindow = { 0, 0, GetWidth(), GetHeight() };
 		m_Info.bFullscreenSupported = true;
+		m_Info.wAttributes = CCD_BG_BLACK | CCD_FG_GREEN;
 		m_Info.dwCursorPosition = V2xy{ 0, 0 };
 		m_Info.dwMaximumWindowSize = GetLargestConsoleWindowSize(m_pCout);
 		//for (UInt8 cli = 0; cli < 16; cli++) { m_Info.ColorTable[cli] = 0x11'11'11 * cli; }
 		m_Info.ColorTable[0] = 0x00'00'00;
-		m_Info.ColorTable[1] = 0x00'00'77;
-		m_Info.ColorTable[2] = 0x00'77'00;
-		m_Info.ColorTable[3] = 0x00'77'77;
-		m_Info.ColorTable[4] = 0x77'00'00;
-		m_Info.ColorTable[5] = 0x77'00'77;
-		m_Info.ColorTable[6] = 0x77'77'00;
-		m_Info.ColorTable[7] = 0x77'77'77;
+		m_Info.ColorTable[1] = 0x00'00'7F;
+		m_Info.ColorTable[2] = 0x00'7F'00;
+		m_Info.ColorTable[3] = 0x00'7F'7F;
+		m_Info.ColorTable[4] = 0x7F'00'00;
+		m_Info.ColorTable[5] = 0x7F'00'7F;
+		m_Info.ColorTable[6] = 0x7F'7F'00;
+		m_Info.ColorTable[7] = 0x7F'7F'7F;
 
 		m_Info.ColorTable[8] = 0x00'00'00;
 		m_Info.ColorTable[9] = 0x00'00'FF;
 		m_Info.ColorTable[10] = 0x00'FF'00;
 		m_Info.ColorTable[11] = 0x00'FF'FF;
 		m_Info.ColorTable[12] = 0xFF'00'00;
-		m_Info.ColorTable[13] = 0xFF'00'11;
+		m_Info.ColorTable[13] = 0xFF'00'FF;
 		m_Info.ColorTable[14] = 0xFF'FF'00;
 		m_Info.ColorTable[15] = 0xFF'FF'FF;
 
 		m_Info.cbSize = sizeof(CFrameBufInfo);
 
 		m_szPxCount = static_cast<Size>(GetWidth()) * static_cast<Size>(GetHeight());
-		m_pPxData = NewTArr<CPixel>(CEngine::Get().GetMemory(), m_szPxCount);
+		m_pPxData = NewTArr<CPixel>(CmdEngine::Get().GetMemory(), m_szPxCount);
 		memset(m_pPxData, 0, m_szPxCount * sizeof(CPixel));
 	
 		if (!SetConsoleScreenBufferInfoEx(m_pCout, &m_Info)) { return; }

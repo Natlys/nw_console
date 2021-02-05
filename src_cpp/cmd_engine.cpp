@@ -5,27 +5,27 @@
 
 namespace CMD
 {
-    CEngine::CEngine() :
+    CmdEngine::CmdEngine() :
         m_wInfo(CWindowInfo()),
         m_pxInfo(CPixelInfo()),
         m_pCout(nullptr), m_pCin(nullptr)
     {
         this->SetWndSize(50, 20);
         this->SetPxSize(8, 16);
-        m_fb.SetSizeWH(GetWndWidth(), GetWndHeight());
+        m_fmBuf.SetSizeWH(GetWndWidth(), GetWndHeight());
         m_pCout = GetStdHandle(STD_OUTPUT_HANDLE);
         m_pCin = GetStdHandle(STD_INPUT_HANDLE);
         m_wInfo.strTitle = "cwindow";
     }
-    CEngine::~CEngine() { }
+    CmdEngine::~CmdEngine() { }
 
     // --setters
-    void CEngine::SetTitle(const char* strTitle) { m_wInfo.strTitle = strTitle; SetConsoleTitleA(&strTitle[0]); }
-    void CEngine::SetWndSize(UInt16 unWidth, UInt16 unHeight) {
+    void CmdEngine::SetTitle(const char* strTitle) { m_wInfo.strTitle = strTitle; SetConsoleTitleA(&strTitle[0]); }
+    void CmdEngine::SetWndSize(UInt16 unWidth, UInt16 unHeight) {
         m_wInfo.xywhRect.Left = m_wInfo.xywhRect.Top = 0;
         m_wInfo.xywhRect.Right = unWidth; m_wInfo.xywhRect.Bottom = unHeight;
     }
-    void CEngine::SetPxSize(UInt16 nWidth, UInt16 nHeight){
+    void CmdEngine::SetPxSize(UInt16 nWidth, UInt16 nHeight){
         m_pxInfo.dwFontSize.X = nWidth;
         m_pxInfo.dwFontSize.Y = nHeight;
         m_pxInfo.FontFamily = FF_DONTCARE;
@@ -35,12 +35,12 @@ namespace CMD
         m_pxInfo.cbSize = sizeof(m_pxInfo);
     }
 
-    void CEngine::SetWndInfo(const CWindowInfo& rcwInfo) { m_wInfo = rcwInfo; SetConsoleWindowInfo(m_fb.GetNative(), TRUE, &m_wInfo.xywhRect); }
-    void CEngine::SetPxInfo(const CPixelInfo& rcpxInfo) { m_pxInfo = rcpxInfo; SetCurrentConsoleFontEx(m_fb.GetNative(), TRUE, &m_pxInfo); }
-    void CEngine::SetCursorInfo(const CCursorInfo& rcurInfo) { m_curInfo = rcurInfo; SetConsoleCursorInfo(m_fb.GetNative(), &m_curInfo); }
+    void CmdEngine::SetWndInfo(const CWindowInfo& rcwInfo) { m_wInfo = rcwInfo; SetConsoleWindowInfo(m_fmBuf.GetNative(), TRUE, &m_wInfo.xywhRect); }
+    void CmdEngine::SetPxInfo(const CPixelInfo& rcpxInfo) { m_pxInfo = rcpxInfo; SetCurrentConsoleFontEx(m_fmBuf.GetNative(), TRUE, &m_pxInfo); }
+    void CmdEngine::SetCursorInfo(const CCursorInfo& rcurInfo) { m_curInfo = rcurInfo; SetConsoleCursorInfo(m_fmBuf.GetNative(), &m_curInfo); }
     
     // --<core_methods>--
-    void CEngine::Run() {
+    void CmdEngine::Run() {
         Init();
         if (!m_bIsRunning) { return; }
         if (m_States.empty()) { return; }
@@ -48,7 +48,7 @@ namespace CMD
         auto fnRunLoop = [this]()->void { while (m_bIsRunning) { Update(); } Quit(); };
         m_thrRun = Thread(fnRunLoop);
     }
-    bool CEngine::Init()
+    bool CmdEngine::Init()
     {
         if (m_bIsRunning || m_Memory.GetDataBeg() != nullptr) { return false; }
         m_bIsRunning = true;
@@ -59,23 +59,23 @@ namespace CMD
 
         {
             V4xywh xywhMinRect = { 0, 0, 1, 1 };
-            if (!SetConsoleWindowInfo(m_fb.GetNative(), TRUE, &xywhMinRect)) { Quit(); return false; }
-            if (!SetCurrentConsoleFontEx(m_fb.GetNative(), TRUE, &m_pxInfo)) { Quit(); return false; }
+            if (!SetConsoleWindowInfo(m_fmBuf.GetNative(), TRUE, &xywhMinRect)) { Quit(); return false; }
+            if (!SetCurrentConsoleFontEx(m_fmBuf.GetNative(), TRUE, &m_pxInfo)) { Quit(); return false; }
 
             m_wInfo.whMaxSize = GetLargestConsoleWindowSize(m_pCout);
             if (m_wInfo.GetHeight() > m_wInfo.whMaxSize.Y) { m_wInfo.xywhRect.Top = 0; m_wInfo.xywhRect.Bottom = m_wInfo.whMaxSize.Y; }
             if (m_wInfo.GetHeight() > m_wInfo.whMaxSize.Y) { m_wInfo.xywhRect.Top = 0; m_wInfo.xywhRect.Bottom = m_wInfo.whMaxSize.Y; }
 
-            m_fb.Remake();
-            if (!SetConsoleWindowInfo(m_fb.GetNative(), TRUE, &m_wInfo.xywhRect)) { Quit(); return false; }
-            if (!SetConsoleActiveScreenBuffer(m_fb.GetNative())) { Quit(); return false; }
+            m_fmBuf.Remake();
+            if (!SetConsoleWindowInfo(m_fmBuf.GetNative(), TRUE, &m_wInfo.xywhRect)) { Quit(); return false; }
+            if (!SetConsoleActiveScreenBuffer(m_fmBuf.GetNative())) { Quit(); return false; }
         }
 
         for (auto& itState : m_States) { if (!itState->Init()) { Quit(); return false; } }
 
         return m_bIsRunning;
     }
-    void CEngine::Quit()
+    void CmdEngine::Quit()
     {
         if (m_bIsRunning || m_Memory.GetDataBeg() == nullptr) { return; }
         m_bIsRunning = false;
@@ -87,22 +87,23 @@ namespace CMD
         SetConsoleActiveScreenBuffer(m_pCout);
     }
 
-    void CEngine::Update()
+    void CmdEngine::Update()
     {
         TimeSys::Update();
         Char strTime[16]{ 0 };
         sprintf(strTime, "ups: %3.2f", 1.0f / TimeSys::GetDeltaS());
-        DrawBytesXY(GetWndWidth() - 16, 3, CMD::CCN_FG_10, &strTime[0], 16);
+        DrawBytesXY(GetWndWidth() - 16, 2, GetWndWidth(), 3, CMD::CCD_FG_GREEN, &strTime[0], 16);
 
         SwapBuffers();
-        m_fb.Clear();
+        m_fmBuf.Clear();
         PollEvents();
         UpdateCursor();
         UpdateKeyboard();
         
         for (auto& itState : m_States) { itState->Update(); }
     }
-    void CEngine::OnEvent(AEvent& rEvt)
+
+    void CmdEngine::OnEvent(AEvent& rEvt)
     {
         if (rEvt.IsInCategory(EC_MOUSE)) {
             MouseEvent* pmEvt = static_cast<MouseEvent*>(&rEvt);
@@ -133,7 +134,7 @@ namespace CMD
             case ET_KEY_RELEASE:
                 m_evInfo.kbInfo.bsKeys[pkEvt->unKeyCode].bNew = false;
                 switch (pkEvt->unKeyCode) {
-                case CMD_KEY_ESCAPE_27:
+                case KC_ESCAPE:
                     StopRunning();
                     rEvt.bIsHandled = true;
                     break;
@@ -143,6 +144,8 @@ namespace CMD
             case ET_KEY_PRESS:
                 m_evInfo.kbInfo.bsKeys[pkEvt->unKeyCode].bNew = true;
                 switch (pkEvt->unKeyCode) {
+                case KC_ESCAPE:
+                    break;
                 default: break;
                 }
                 break;
@@ -173,11 +176,11 @@ namespace CMD
     // --==</core_methods>==--
     
     // --==<implementation_methods>==--
-    inline void CEngine::SwapBuffers() {
-        if (!WriteConsoleOutputW(m_fb.GetNative(), &m_fb.GetPxData()[0],
-            { m_fb.GetWidth(), m_fb.GetHeight() }, { 0, 0 }, &m_fb.GetInfo().srWindow)) { StopRunning(); return; }
+    inline void CmdEngine::SwapBuffers() {
+        if (!WriteConsoleOutputW(m_fmBuf.GetNative(), &m_fmBuf.GetPxData()[0],
+            { m_fmBuf.GetWidth(), m_fmBuf.GetHeight() }, { 0, 0 }, &m_fmBuf.GetInfo().srWindow)) { StopRunning(); return; }
     }
-    inline void CEngine::PollEvents() {
+    inline void CmdEngine::PollEvents() {
         GetNumberOfConsoleInputEvents(m_pCin, &m_evInfo.unEvGetCount);
         if (m_evInfo.unEvGetCount > 0) {
             ReadConsoleInputA(m_pCin, m_evInfo.irEvents, m_evInfo.unEvGetCount, &m_evInfo.unEvReadCount);
@@ -203,12 +206,22 @@ namespace CMD
                 else if (evTypeId == CMD_KEY_EVT) {
                     KEY_EVENT_RECORD& rEvt = m_evInfo.irEvents[evi].Event.KeyEvent;
                     if (rEvt.bKeyDown){
-                        KeyboardEvent kbEvt(ET_KEY_PRESS, rEvt.wVirtualKeyCode);
-                        OnEvent(kbEvt);
+                        if (rEvt.wRepeatCount == 1) {
+                            KeyboardEvent kbEvt(ET_KEY_PRESS, rEvt.wVirtualKeyCode);
+                            kbEvt.cChar = rEvt.uChar.AsciiChar;
+                            OnEvent(kbEvt);
+                        }
+                        else {
+                        }
                     }
                     else {
                         KeyboardEvent kbEvt(ET_KEY_RELEASE, rEvt.wVirtualKeyCode);
+                        kbEvt.cChar = rEvt.uChar.AsciiChar;
                         OnEvent(kbEvt);
+                        if (rEvt.uChar.AsciiChar >= ' ' && rEvt.uChar.AsciiChar <= 'z') {
+                            KeyboardEvent kbEvt(static_cast<Char>(rEvt.uChar.AsciiChar));
+                            OnEvent(kbEvt);
+                        }
                     }
                 }
                 else if (evTypeId == CMD_FOCUS_EVT) {
@@ -225,7 +238,7 @@ namespace CMD
             }
         }
     }
-    inline void CEngine::UpdateCursor() {
+    inline void CmdEngine::UpdateCursor() {
         for (UInt8 mi = 0; mi < MSB_COUNT; mi++) {
             ButtonState& rbs = m_evInfo.msInfo.bsButtons[mi];
             rbs.bPressed = rbs.bReleased = false;
@@ -242,7 +255,7 @@ namespace CMD
             rbs.bOld = rbs.bNew;
         }
     }
-    inline void CEngine::UpdateKeyboard() {
+    inline void CmdEngine::UpdateKeyboard() {
         for (UInt16 ki = 0; ki < KC_COUNT; ki++) {
             ButtonState& rbs = m_evInfo.kbInfo.bsKeys[ki];
             rbs.bPressed = rbs.bReleased = false;
