@@ -1,13 +1,11 @@
-#include <cmd_pch.hpp>
-#include <cmd_gui.h>
+#include <nwc_pch.hpp>
+#include <nwc_gui.h>
 
-#include <cmd_engine.h>
+#include <nwc_engine.h>
 
-#include <nwlib/nwl_physics_2d.h>
+IdStack NWC::CWidget::s_IdStack = IdStack();
 
-IdStack CMD::CWidget::s_IdStack = IdStack();
-
-namespace CMD
+namespace NWC
 {
 	CWidget::CWidget() :
 		m_unId(0), m_strName("cwidget"),
@@ -27,7 +25,7 @@ namespace CMD
 	void CWidget::SetAction(const Action& rAct) { m_fnAction = rAct; }
 }
 
-namespace CMD
+namespace NWC
 {
 	CMenuItem::CMenuItem() : CWidget() { }
 	CMenuItem::~CMenuItem() { }

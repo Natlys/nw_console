@@ -1,12 +1,12 @@
-#include <cmd_pch.hpp>
-#include "cmd_framebuf.h"
+#include <nwc_pch.hpp>
+#include "nwc_framebuf.h"
 
-#include <cmd_engine.h>
+#include <nwc_engine.h>
 
-namespace CMD
+namespace NWC
 {
 	CFrameBuf::CFrameBuf():m_pCout(nullptr),
-		m_szPxCount(0), m_pPxData(nullptr),
+		m_unPxCount(0), m_pPxData(nullptr),
 		m_cpxClear(CPixel{ CPT_SOLID, CCN_BG_1 | CCN_FG_1 }),
 		m_Info(CFrameBufInfo())
 	{
@@ -19,9 +19,9 @@ namespace CMD
     // --==<core_methods>==--
     void CFrameBuf::Remake() {
 		if (m_pPxData != nullptr) {
-			DelTArr<CPixel>(CmdEngine::Get().GetMemory(), m_pPxData, m_szPxCount);
+			DelTArr<CPixel>(CmdEngine::Get().GetMemory(), m_pPxData, m_unPxCount);
 			m_pPxData = nullptr;
-			m_szPxCount = 0;
+			m_unPxCount = 0;
 		}
 
 		V2xy whSize = { CmdEngine::Get().GetWndWidth() + 1, CmdEngine::Get().GetWndHeight() + 1 };
@@ -54,9 +54,9 @@ namespace CMD
 
 		m_Info.cbSize = sizeof(CFrameBufInfo);
 
-		m_szPxCount = static_cast<Size>(GetWidth()) * static_cast<Size>(GetHeight());
-		m_pPxData = NewTArr<CPixel>(CmdEngine::Get().GetMemory(), m_szPxCount);
-		memset(m_pPxData, 0, m_szPxCount * sizeof(CPixel));
+		m_unPxCount = static_cast<Size>(GetWidth()) * static_cast<Size>(GetHeight());
+		m_pPxData = NewTArr<CPixel>(CmdEngine::Get().GetMemory(), m_unPxCount);
+		memset(m_pPxData, 0, m_unPxCount * sizeof(CPixel));
 	
 		if (!SetConsoleScreenBufferInfoEx(m_pCout, &m_Info)) { return; }
 		if (!SetConsoleScreenBufferSize(m_pCout, m_Info.dwSize)) { return; }

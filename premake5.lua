@@ -6,8 +6,8 @@ project "nw_cmd"
 	cppdialect "c++17"
 	targetdir ("bin/"..dir_out.."%{prj.name}")
 	objdir ("bin/int/"..dir_out.."%{prj.name}")
-	pchheader "cmd_pch.hpp"
-	pchsource "src_cpp/cmd_pch.cpp"
+	pchheader "nwc_pch.hpp"
+	pchsource "src_cpp/nwc_pch.cpp"
 	files
 	{
 		"src_cpp/**.c**",
@@ -26,22 +26,13 @@ project "nw_cmd"
 	{
 		"nw_lib"
 	}
-	defines
-	{
-		"CMD_BUILD_LIB",
-		"CMD_LINK_STATIC"
-		--"CMD_LINK_DYNAMIC"
-	}
 	filter "system:windows"
 		systemversion "latest"
-		defines
-		{
-			"CMD_PLATFORM_WINDOWS"
-		}
+		defines { "CMD_PLATFORM_WINDOWS" }
 	filter "configurations:debug"
-		defines "CMD_DEBUG"
+		defines { "CMD_DEBUG" }
 		symbols "on"
 	filter "configurations:release"
-		defines "CMD_RELEASE"
+		defines { "CMD_RELEASE" }
 		optimize "on"
 --==</console_project>==--

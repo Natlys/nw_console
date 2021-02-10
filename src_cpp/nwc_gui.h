@@ -1,10 +1,9 @@
-#ifndef CMD_GUI_H
-#define CMD_GUI_H
+#ifndef NWC_GUI_H
+#define NWC_GUI_H
 
-#include <cmd_core.hpp>
-#include <cmd_structs.h>
+#include <nwc_core.hpp>
 
-namespace CMD
+namespace NWC
 {
 	enum CWidgetStates : UInt8 {
 		CWS_DEFAULT = 0,
@@ -14,7 +13,7 @@ namespace CMD
 		CWS_NEXT, CWS_BACK,
 		CWS_MOVE_LT, CWA_MOVE_RT, CWS_MOVE_UP, CWS_MOVE_DN
 	};
-	class CMD_API CWidget
+	class NWC_API CWidget
 	{
 	public:
 		using Action = std::function<UInt32()>;
@@ -49,10 +48,10 @@ namespace CMD
 		static IdStack s_IdStack;
 	};
 }
-namespace CMD
+namespace NWC
 {
-	/// CMenu class for CMD graphical user interface
-	class CMD_API CMenuItem : public CWidget
+	/// CMenu class for NWC graphical user interface
+	class NWC_API CMenuItem : public CWidget
 	{
 	public:
 		CMenuItem();
@@ -63,4 +62,4 @@ namespace CMD
 	};
 }
 
-#endif	// CMD_GUI_H
+#endif	// NWC_GUI_H

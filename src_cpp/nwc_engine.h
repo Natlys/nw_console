@@ -1,16 +1,37 @@
-#ifndef CMD_ENGINE_H
-#define CMD_ENGINE_H
+#ifndef NWC_ENGINE_H
+#define NWC_ENGINE_H
 
-#include <nwlib/nwl_engine.h>
+#include <nwc_core.hpp>
+#include <nwc_framebuf.h>
 
-#include <cmd_core.hpp>
-#include <cmd_structs.h>
-#include <cmd_framebuf.h>
+namespace NWC
+{
+	struct NWC_API CWindowInfo
+	{
+	public:
+		String strTitle = String("\0", 256);
+		V4xywh xywhRect = { 0, 0, 1, 1 };
+		V2wh whMaxSize = { 1, 1 };
+		bool bIsFocused = false;
+	public:
+		inline Int16 GetWidth() const { return Abs(xywhRect.Right - xywhRect.Left); }
+		inline Int16 GetHeight() const { return Abs(xywhRect.Bottom - xywhRect.Top); }
+		inline V2xy GetSize() const { return { GetWidth(), GetHeight() }; }
+	};
+	struct NWC_API CEventsInfo
+	{
+		UInt64 unEvGetCount = 0;
+		UInt64 unEvReadCount = 0;
+		INPUT_RECORD irEvents[64];
 
-namespace CMD
+		MouseState<NWC_MS_BTN_COUNT> msInfo;
+		KeyboardState<NWC_KEY_COUNT> kbInfo;
+	};
+}
+namespace NWC
 {
 	/// CmdEngine class
-	class CMD_API CmdEngine : public AEngine<CmdEngine>
+	class NWC_API CmdEngine : public AEngine<CmdEngine, AEngineState>
 	{
 	public:
 		CmdEngine();
@@ -60,7 +81,7 @@ namespace CMD
 		inline void DrawLineXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, CPixel cpx);
 		inline void DrawRectXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, CPixel cpx);
 		inline void DrawRectXYWH(Int16 nX, Int16 nY, Int16 nW, Int16 nH, CPixel cpx);
-		inline void DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, UInt16 unLen);
+		inline void DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, Size szLen);
 	private:
 		inline void PollEvents();
 		inline void SwapBuffers();
@@ -122,8 +143,8 @@ namespace CMD
 	inline void CmdEngine::DrawRectXYWH(Int16 nX, Int16 nY, Int16 nW, Int16 nH, CPixel cpx) {
 		DrawRectXY(nX, nY, nX + nW, nY + nH, cpx);
 	}
-	inline void CmdEngine::DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, UInt16 unLen) {
-		m_fmBuf.DrawBytesXY(nX0, nY0, nX1, nY1, cColor, str, unLen);
+	inline void CmdEngine::DrawBytesXY(Int16 nX0, Int16 nY0, Int16 nX1, Int16 nY1, UInt16 cColor, Byte* str, Size szLen) {
+		m_fmBuf.DrawBytesXY(nX0, nY0, nX1, nY1, cColor, str, szLen);
 	}
 }
-#endif	// CMD_ENGINE_H
+#endif	// NWC_ENGINE_H

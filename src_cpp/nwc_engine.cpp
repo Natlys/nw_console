@@ -1,9 +1,9 @@
-#include "cmd_pch.hpp"
-#include "cmd_engine.h"
+#include "nwc_pch.hpp"
+#include "nwc_engine.h"
 
-#define CMD_INPUT_FLAGS ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT
+#define NWC_INPUT_FLAGS ENABLE_EXTENDED_FLAGS | ENABLE_MOUSE_INPUT | ENABLE_WINDOW_INPUT
 
-namespace CMD
+namespace NWC
 {
     CmdEngine::CmdEngine() :
         m_wInfo(CWindowInfo()),
@@ -55,7 +55,7 @@ namespace CMD
         m_Memory = MemArena(new Byte[1 << 20], 1 << 20);
 
         SetTitle(&m_wInfo.strTitle[0]);
-        if (!SetConsoleMode(m_pCin, CMD_INPUT_FLAGS)) { Quit(); return false; }
+        if (!SetConsoleMode(m_pCin, NWC_INPUT_FLAGS)) { Quit(); return false; }
 
         {
             V4xywh xywhMinRect = { 0, 0, 1, 1 };
@@ -92,7 +92,7 @@ namespace CMD
         TimeSys::Update();
         Char strTime[16]{ 0 };
         sprintf(strTime, "ups: %3.2f", 1.0f / TimeSys::GetDeltaS());
-        DrawBytesXY(GetWndWidth() - 16, 2, GetWndWidth(), 3, CMD::CCD_FG_GREEN, &strTime[0], 16);
+        DrawBytesXY(GetWndWidth() - 16, 2, GetWndWidth(), 3, NWC::CCD_FG_GREEN, &strTime[0], 16);
 
         SwapBuffers();
         m_fmBuf.Clear();
@@ -186,14 +186,14 @@ namespace CMD
             ReadConsoleInputA(m_pCin, m_evInfo.irEvents, m_evInfo.unEvGetCount, &m_evInfo.unEvReadCount);
             for (UInt16 evi = 0; evi < m_evInfo.unEvGetCount; evi++) {
                 UInt32 evTypeId = m_evInfo.irEvents[evi].EventType;
-                if (evTypeId == CMD_MS_EVT) {
+                if (evTypeId == NWC_MS_EVT) {
                     MOUSE_EVENT_RECORD& rEvt = m_evInfo.irEvents[evi].Event.MouseEvent;
-                    if (rEvt.dwEventFlags == CMD_MS_MOVED) {
+                    if (rEvt.dwEventFlags == NWC_MS_MOVED) {
                         MouseEvent msEvt(ET_MOUSE_MOVE, rEvt.dwMousePosition.X, rEvt.dwMousePosition.Y);
                         OnEvent(msEvt);
                     }
                     else {
-                        for (UInt8 mi = 0; mi < CMD_MS_BTN_COUNT; mi++) {
+                        for (UInt8 mi = 0; mi < NWC_MS_BTN_COUNT; mi++) {
                             auto& rmb = m_evInfo.msInfo.bsButtons[mi];
                             rmb.bNew = ((1 << mi) & rEvt.dwButtonState) > 0;
                             if (rmb.bNew != rmb.bOld) {
@@ -203,12 +203,11 @@ namespace CMD
                         }
                     }
                 }
-                else if (evTypeId == CMD_KEY_EVT) {
+                else if (evTypeId == NWC_KEY_EVT) {
                     KEY_EVENT_RECORD& rEvt = m_evInfo.irEvents[evi].Event.KeyEvent;
                     if (rEvt.bKeyDown){
                         if (rEvt.wRepeatCount == 1) {
                             KeyboardEvent kbEvt(ET_KEY_PRESS, rEvt.wVirtualKeyCode);
-                            kbEvt.cChar = rEvt.uChar.AsciiChar;
                             OnEvent(kbEvt);
                         }
                         else {
@@ -216,23 +215,22 @@ namespace CMD
                     }
                     else {
                         KeyboardEvent kbEvt(ET_KEY_RELEASE, rEvt.wVirtualKeyCode);
-                        kbEvt.cChar = rEvt.uChar.AsciiChar;
                         OnEvent(kbEvt);
                         if (rEvt.uChar.AsciiChar >= ' ' && rEvt.uChar.AsciiChar <= 'z') {
-                            KeyboardEvent kbEvt(static_cast<Char>(rEvt.uChar.AsciiChar));
+                            KeyboardEvent kbEvt(ET_KEY_CHAR, rEvt.uChar.AsciiChar);
                             OnEvent(kbEvt);
                         }
                     }
                 }
-                else if (evTypeId == CMD_FOCUS_EVT) {
+                else if (evTypeId == NWC_FOCUS_EVT) {
                     WindowEvent wEvt(ET_WINDOW_FOCUS, m_evInfo.irEvents[evi].Event.FocusEvent.bSetFocus);
                     OnEvent(wEvt);
                 }
-                else if (evTypeId == CMD_WND_SIZE_EVT) {
+                else if (evTypeId == NWC_WND_SIZE_EVT) {
                     WindowEvent wEvt(ET_WINDOW_RESIZE, m_evInfo.irEvents[evi].Event.WindowBufferSizeEvent.dwSize.X, m_evInfo.irEvents[evi].Event.WindowBufferSizeEvent.dwSize.Y);
                     OnEvent(wEvt);
                 }
-                else if (evTypeId == CMD_MENU_EVT) {
+                else if (evTypeId == NWC_MENU_EVT) {
                     MENU_EVENT_RECORD& rEvt = m_evInfo.irEvents[evi].Event.MenuEvent;
                 }
             }
