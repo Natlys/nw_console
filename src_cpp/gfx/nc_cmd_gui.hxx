@@ -50,4 +50,4 @@ public:
 };
 #	endif	/* NC_WAPI */
 /* end_of_file */
-#endif	// NC_CMD_GUI_H //
+#endif	/* NC_CMD_GUI_H */

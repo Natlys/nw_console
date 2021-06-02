@@ -63,5 +63,5 @@ v1nil_t cmd_menu_item::on_state(cmd_widget_states state)
 	m_state = state;
 }
 
-#endif	// NC_WAPI //
+#endif	/* NC_WAPI */
 /* end_of_file */

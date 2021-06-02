@@ -42,20 +42,20 @@ namespace NC
 		if (x < 0 || y < 0) { return; }
 		v1s16_t width = get_size_x();
 		if (x > width) { return; }
-		set_pixel(NC_XY_TO_X(x, y, width), pxl_draw);
+		set_pixel(NC_NUM_2D_1D(x, y, width), pxl_draw);
 	}
 	v1nil_t cmd_fmbuf::set_pixel(v1s16 x, v1s16 y, cmd_colors color_val, cmd_pixel_types pxl_type) {
 		if (x < 0) { return; }
 		v1s16_t width = get_size_x();
 		if (x > width) { return; }
-		set_pixel(NC_XY_TO_X(x, y, width), color_val, pxl_type);
+		set_pixel(NC_NUM_2D_1D(x, y, width), color_val, pxl_type);
 	}
 	v1nil_t cmd_fmbuf::set_byte(v1s16 x, v1s16 y, cmd_colors color_val, sbyte_t bt)
 	{
 		if (x < 0 || y < 0) { return; }
 		v1s16_t width = get_size_x();
 		if (x > width) { return; }
-		size_t crd = NC_XY_TO_X(x, y, width);
+		size_t crd = NC_NUM_2D_1D(x, y, width);
 		if (crd >= m_pxl_count) { return; }
 		m_pxl_data[crd].Attributes = color_val;
 		m_pxl_data[crd].Char.AsciiChar = bt;

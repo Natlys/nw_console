@@ -113,7 +113,7 @@ v1bit_t cmd_engine::event_proc(nc_event_t& evt)
     }
     return NC_TRUTH;
 }
-// drawing //
+/* drawing */
 cmd_engine::engine_t& cmd_engine::draw_line(v1s16 x0, v1s16 y0, v1s16 x1, v1s16 y1, cmd_pixel pxl_draw) {
     v1s16 delta_x = x1 - x0;
     v1s16 delta_y = y1 - y0;

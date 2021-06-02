@@ -3,7 +3,7 @@
 /* config */
 /* includes */
 #	include "nc_cmd_pch.hpp"
-// linkage //
+/* linkage */
 #   if (defined NC_API)
 #       undef NC_API
 #   endif   /* NC_API */
@@ -17,7 +17,7 @@
 #   else
 #       define NC_API NC_DLL_IMPORT
 #   endif	/* NC_BUILD */
-// types //
+/* types */
 /// 0xFF'FF'FF'FF -> 32 bits
 /// counting from left:
 /// 4 bits - red; 4 bits - blue; 4 bits - green; 4 bits - alpha
@@ -78,4 +78,4 @@ enum cmd_colors_: v1s16_t {
 	};
 typedef v1s16_t cmd_colors;
 /* end_of_file */
-#endif	// NC_CMD_CORE_HPP //
+#endif	/* NC_CMD_CORE_HPP */

@@ -12,28 +12,28 @@ endif
 
 ifeq ($(config),work_win64)
   ifeq ($(origin CC), default)
-    CC = F:\dev\gcc\bin\gcc.exe
+    CC = gcc.exe
   endif
   ifeq ($(origin CXX), default)
-    CXX = F:\dev\gcc\bin\g++.exe
+    CXX = g++.exe
   endif
   ifeq ($(origin AR), default)
     AR = ar
   endif
   RESCOMP = default
   TARGETDIR = bin_cxx
-  TARGET = $(TARGETDIR)/nc_cmd
+  TARGET = $(TARGETDIR)/nc_cmd.exe
   OBJDIR = bin_cxx/win64/work
   DEFINES +=
   INCLUDES += -Isrc_cxx
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -ffloat-store -g -w -std=c99 -fpermissive
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -ffloat-store -g -w -fpermissive
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -ffloat-store -g -w -fno-rtti -fpermissive
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../nc_cfg/bin_cxx/nc_cfg.lib ../nc_lib/bin_cxx/nc_lib.lib
-  LDDEPS += ../nc_cfg/bin_cxx/nc_cfg.lib ../nc_lib/bin_cxx/nc_lib.lib
-  ALL_LDFLAGS += $(LDFLAGS) -L../nc_cfg -L../nc_lib -L../nc_mem -L../nc_iop -L/usr/lib64 -m64
+  LIBS += ../nc_cfg/bin_cxx/nc_cfg.lib
+  LDDEPS += ../nc_cfg/bin_cxx/nc_cfg.lib
+  ALL_LDFLAGS += $(LDFLAGS) -L../nc_cfg -L/usr/lib64 -m64
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -48,28 +48,28 @@ endif
 
 ifeq ($(config),game_win64)
   ifeq ($(origin CC), default)
-    CC = F:\dev\gcc\bin\gcc.exe
+    CC = gcc.exe
   endif
   ifeq ($(origin CXX), default)
-    CXX = F:\dev\gcc\bin\g++.exe
+    CXX = g++.exe
   endif
   ifeq ($(origin AR), default)
     AR = ar
   endif
   RESCOMP = default
   TARGETDIR = bin_cxx
-  TARGET = $(TARGETDIR)/nc_cmd
+  TARGET = $(TARGETDIR)/nc_cmd.exe
   OBJDIR = bin_cxx/win64/game
   DEFINES +=
   INCLUDES += -Isrc_cxx
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
   ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -w -std=c99 -fpermissive
-  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -w -fpermissive
+  ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -w -fno-rtti -fpermissive
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  LIBS += ../nc_cfg/bin_cxx/nc_cfg.lib ../nc_lib/bin_cxx/nc_lib.lib
-  LDDEPS += ../nc_cfg/bin_cxx/nc_cfg.lib ../nc_lib/bin_cxx/nc_lib.lib
-  ALL_LDFLAGS += $(LDFLAGS) -L../nc_cfg -L../nc_lib -L../nc_mem -L../nc_iop -L/usr/lib64 -m64 -s
+  LIBS += ../nc_cfg/bin_cxx/nc_cfg.lib
+  LDDEPS += ../nc_cfg/bin_cxx/nc_cfg.lib
+  ALL_LDFLAGS += $(LDFLAGS) -L../nc_cfg -L/usr/lib64 -m64 -s
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -84,8 +84,8 @@ endif
 
 OBJECTS := \
 	$(OBJDIR)/nc_cmd_buf.o \
-	$(OBJDIR)/nc_cmd_eng.o \
-	$(OBJDIR)/nc_cmd_entry.o \
+	$(OBJDIR)/nc_cmd_sys.o \
+	$(OBJDIR)/nc_cmd.o \
 	$(OBJDIR)/nc_cmd_pch.o \
 
 RESOURCES := \
@@ -147,36 +147,16 @@ endif
 
 $(OBJDIR)/nc_cmd_buf.o: src_cxx/core/nc_cmd_buf.cxx
 	@echo $(notdir $<)
-ifeq ($(config),work_win64)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
-ifeq ($(config),game_win64)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
-$(OBJDIR)/nc_cmd_eng.o: src_cxx/core/nc_cmd_eng.cxx
+$(OBJDIR)/nc_cmd_sys.o: src_cxx/core/nc_cmd_sys.cxx
 	@echo $(notdir $<)
-ifeq ($(config),work_win64)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
-ifeq ($(config),game_win64)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
-$(OBJDIR)/nc_cmd_entry.o: src_cxx/nc_cmd_entry.cxx
+$(OBJDIR)/nc_cmd.o: src_cxx/nc_cmd.cxx
 	@echo $(notdir $<)
-ifeq ($(config),work_win64)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
-ifeq ($(config),game_win64)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
 $(OBJDIR)/nc_cmd_pch.o: src_cxx/nc_cmd_pch.cxx
 	@echo $(notdir $<)
-ifeq ($(config),work_win64)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
-ifeq ($(config),game_win64)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-endif
 
 -include $(OBJECTS:%.o=%.d)
 ifneq (,$(PCH))

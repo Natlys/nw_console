@@ -51,7 +51,7 @@ public:
 	v1nil_t set_wnd_info(const cmd_window_info& info);
 	v1nil_t set_pxl_info(const cmd_pixel_info& info);
 	v1nil_t set_crs_info(const cmd_cursor_info& info);
-	/* predicates */
+	/* vetters */
 	/* commands */
 	virtual v1bit_t init() override;
 	virtual v1bit_t quit() override;
@@ -75,4 +75,4 @@ private:
 	cmd_cursor_info m_mouse_info;
 };
 #	endif	/* NC_API */
-#endif	// NC_CMD_CONSOLE_ENGINE_H //
+#endif	/* NC_CMD_CONSOLE_ENGINE_H */

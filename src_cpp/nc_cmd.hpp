@@ -1,5 +1,5 @@
 #ifndef NC_CMD_HPP
 #   define NC_CMD_HPP
-// core //
+/* core */
 /* end_of_file */
-#endif	// NC_CMD_HPP //
+#endif	/* NC_CMD_HPP */
